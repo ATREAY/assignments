@@ -16,6 +16,21 @@ setInterval(() => {
     numberOfRequestsForUser = {};
 }, 1000)
 
+app.use(function(req, res, next){
+  const userId = req.header["user-id"];
+  if(numberOfRequestsForUser[userId]){
+    numberOfRequestsForUser[userId] = numberOfRequestsForUser[userId] + 1;
+    if(numberOfRequestsForUser[userId] > 5){
+      res.status(404).send("bohot ho raha hai bhai!!")
+    } else {
+      next();
+    }
+  } else {
+    numberOfRequestsForUser[userId] = 1; // to initialize the user request inorder to start the loop(i.e for 1st request)
+    next();
+  }
+});
+
 app.get('/user', function(req, res) {
   res.status(200).json({ name: 'john' });
 });
